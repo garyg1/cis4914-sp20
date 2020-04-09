@@ -1,0 +1,4 @@
+data/
+apache-jena*/
+__pycache__/
+*.pkl
