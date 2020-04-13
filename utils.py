@@ -16,3 +16,9 @@ def transpose_dict(d):
     for k in d:
         transposed[d[k]] += 1
     return dict(transposed)
+
+def histogram(int_iter):
+    count = defaultdict(lambda: 0)
+    for i in int_iter:
+        count[i] += 1
+    return dict(count)

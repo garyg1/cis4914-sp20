@@ -1,0 +1,5 @@
+- schema validation
+- naive orphaned
+- person without vcard
+- list of triples to delete
+- connected components

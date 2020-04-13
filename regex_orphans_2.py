@@ -1,7 +1,6 @@
 from parse import get_lines, parse_line, get_data
 from rdf import TYPE, LABEL, RELATES, RELATED_BY, NUM_LINES
 from utils import get_obj, transpose_dict
-from math import log10, floor
 
 edges = get_obj('regex_orphans_edges.pkl')
 
