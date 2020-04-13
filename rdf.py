@@ -11,6 +11,8 @@ TYPE_DATETIMEVALUE = "<http://vivoweb.org/ontology/core#DateTimeValue>"
 TYPE_DATETIME = "<http://vivoweb.org/ontology/core#dateTime>"
 TYPE_DATETIMEPRECISION = "<http://vivoweb.org/ontology/core#DateTimeValuePrecision>"
 TYPE_DATETIMEINTERVAL = "<http://vivoweb.org/ontology/core#dateTimeInterval>"
+TYPE_UNIVERSITY = "<http://vivoweb.org/ontology/core#University>"
+TYPE_CONCEPT = "<http://www.w3.org/2004/02/skos/core#Concept>"
 
 INDIVIDUAL = re.compile("<http:\/\/vivo\.ufl\.edu\/individual\/[\w-]+>")
 def is_individual(uri):

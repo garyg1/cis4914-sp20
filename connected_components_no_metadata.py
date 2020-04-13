@@ -4,7 +4,7 @@ from utils import dump_obj, get_obj
 from union_find import UnionFind
 import numpy as np
 
-metadata_uris = get_obj('metadata_uris.pkl')
+metadata_uris = get_obj('metadata_uris_2.pkl')
 
 sets = UnionFind()
 line_count = 0
@@ -26,4 +26,4 @@ for s, p, o in map(parse_line, get_data()):
     if (not is_subject_metadata) and (not is_object_metadata):
         sets.union(s, o)
 
-dump_obj('components_no_datetime.pkl', sets.components())
+dump_obj('components_no_metadata.pkl', sets.components())
