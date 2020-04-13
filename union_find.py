@@ -2,6 +2,7 @@
 A union-find disjoint set data structure.
 
 """
+from collections import defaultdict
 
 # 2to3 sanity
 from __future__ import (
@@ -10,8 +11,8 @@ from __future__ import (
 
 # Third-party libraries
 import numpy as np
-from collections import defaultdict
 
+COMPONENTS_NON_NUMPY_THRESHOLD = 1000
 
 class UnionFind(object):
     """Union-find disjoint sets datastructure.
@@ -92,7 +93,7 @@ class UnionFind(object):
         self.n_comps = 0  # the number of disjoint sets or components
         self._next = 0  # next available id
         self._elts = []  # the elements
-        self._indx = {}  #  dict mapping elt -> index in _elts
+        self._indx = {}  # dict mapping elt -> index in _elts
         self._par = []  # parent: for the internal tree structure
         self._siz = []  # size of the component - correct only for roots
 
@@ -101,9 +102,8 @@ class UnionFind(object):
         for elt in elements:
             self.add(elt)
 
-
     def __repr__(self):
-        return  (
+        return (
             '<UnionFind:\n\telts={},\n\tsiz={},\n\tpar={},\nn_elts={},n_comps={}>'
             .format(
                 self._elts,
@@ -263,11 +263,13 @@ class UnionFind(object):
         vfind = np.vectorize(self.find)
         roots = vfind(elts)
         distinct_roots = set(roots)
-        root_to_class = defaultdict(lambda: set())
-        for elt, root in zip(elts, roots):
-            root_to_class[root].add(elt)
-        return list(root_to_class.values())
-        # return [set(elts[roots == root]) for root in distinct_roots]
+        if len(distinct_roots) >= COMPONENTS_NON_NUMPY_THRESHOLD:
+            root_to_class = defaultdict(lambda: set())
+            for elt, root in zip(elts, roots):
+                root_to_class[root].add(elt)
+            return list(root_to_class.values())
+        else:
+            return [set(elts[roots == root]) for root in distinct_roots]
 
     def component_mapping(self):
         """Return a dict mapping elements to their components.

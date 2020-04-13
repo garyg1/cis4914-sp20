@@ -15,14 +15,15 @@ for s, p, o in map(parse_line, get_data()):
 
     is_subject_individual = is_individual(s)
     is_object_individual = is_individual(o)
-    is_subject_metadata = (not is_subject_individual) or (s in metadata_uris)
-    if is_subject_metadata:
-        continue
-    sets.add(s)
 
+    is_subject_metadata = (not is_subject_individual) or (s in metadata_uris)
     is_object_metadata = (not is_object_individual) or (o in metadata_uris)
+
+    if not is_subject_metadata:
+        sets.add(s)
     if not is_object_metadata:
         sets.add(o)
+    if (not is_subject_metadata) and (not is_object_metadata):
         sets.union(s, o)
 
 dump_obj('components_no_datetime.pkl', sets.components())
