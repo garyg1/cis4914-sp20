@@ -1,5 +1,5 @@
 from parse import get_lines, parse_line, get_data
-from rdf import TYPE, LABEL, RELATES, RELATED_BY, NUM_LINES, is_individual, is_datetime, TYPE_UNIVERSITY
+from rdf import TYPE, LABEL, RELATES, RELATED_BY, NUM_LINES, is_individual, is_datetime, TYPE_UNIVERSITY, TYPE_CONCEPT
 from utils import dump_obj
 from collections import defaultdict
 

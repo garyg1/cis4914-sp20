@@ -16,7 +16,6 @@ for s, p, o in map(parse_line, get_data()):
     if not s in edges:
         edges[s] = 0
 
-
     if is_individual(o):
         edges[s] += 1
         
