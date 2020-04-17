@@ -10,20 +10,12 @@ def get_data():
 
 
 def parse_line(line):
-    # line = ' '.join(line.split(' ')[:-2])
     subjectEnd = line.find(' ')
     predicateEnd = line.find(' ', subjectEnd + 1)
     objectEnd = line.find(' ', predicateEnd + 1)
 
-    subject = line[:subjectEnd]
-    predicate = line[subjectEnd + 1: predicateEnd]
-    object = line[predicateEnd + 1:objectEnd]
-
-    # if (subject[:2] == '_:'):
-    #     subject = None
-    # if (predicate[:2] == '_:'):
-    #     predicate = None
-    # if (object[:2] == '_:'):
-    #     object = None
+    subject = line[ : subjectEnd]
+    predicate = line[subjectEnd + 1 : predicateEnd]
+    object = line[predicateEnd + 1 : objectEnd]
 
     return subject, predicate, object
