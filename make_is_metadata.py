@@ -14,4 +14,4 @@ for s, p, o in map(parse_line, get_data()):
     if p == TYPE and (o == TYPE_FOAF_ORGANIZATION or o == TYPE_CONCEPT):
         metadata_uris.add(s)
 
-dump_obj('saved/metadata_uris.pkl', metadata_uris)
+dump_obj('metadata_uris.pkl', metadata_uris)
