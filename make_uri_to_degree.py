@@ -1,9 +1,9 @@
-from parse import get_lines, parse_line, get_data
-from rdf import TYPE, LABEL, RELATES, RELATED_BY, NUM_LINES, is_individual, is_datetime
+from parse import parse_line, get_data
+from rdf import *
 from utils import dump_obj, get_obj
 from collections import defaultdict
 
-uri_to_degree = defaultdict(lambda: 0)
+uri_to_degree = defaultdict(int)
 
 line_count = 0
 for s, p, o in map(parse_line, get_data()):

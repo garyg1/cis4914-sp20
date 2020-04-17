@@ -5,6 +5,18 @@ from rdf import NUM_LINES, TYPE_ANY
 uritype = get_obj('uri_to_type.pkl')
 
 def query_orphans(queries):
+    """
+    simultaneously runs `queries` in parallel. 
+    
+    returns a list [(q1_all, q1_start, q1_end), ...] corresponding to the queries where:
+    - q1_all is a list of all elements of type1
+    - q1_start is a list of all elements of type1 that are not out-connected to a type2 by a begin_edge_type
+    - q1_end is a list of all elements of type1 that are not in-connected to a type2 by a end_edge_type
+
+    queries must be an array of the form
+    [(type1, type2, begin_edge_type, end_edge_type), ...]
+    """
+
     all_of_type = []
     types_begin = []
     types_end = []

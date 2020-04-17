@@ -1,10 +1,9 @@
-from parse import get_lines, parse_line, get_data
-from rdf import TYPE, LABEL, RELATES, RELATED_BY, NUM_LINES, is_individual, is_datetime
-from utils import dump_obj, get_obj
+from parse import parse_line, get_data
+from utils import dump_obj, get_obj, histogram
+from rdf import *
 from union_find import UnionFind
-import numpy as np
 
-metadata_uris = get_obj('metadata_uris_2.pkl')
+metadata_uris = get_obj('metadata_uris.pkl')
 
 sets = UnionFind()
 line_count = 0

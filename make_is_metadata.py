@@ -1,7 +1,7 @@
 from parse import get_lines, parse_line, get_data
-from rdf import TYPE, LABEL, RELATES, RELATED_BY, NUM_LINES, is_individual, is_datetime
 from utils import dump_obj
 from collections import defaultdict
+from rdf import *
 
 metadata_uris = set()
 
@@ -11,7 +11,7 @@ for s, p, o in map(parse_line, get_data()):
     if line_count % 100000 == 0:
         print(line_count, '/', NUM_LINES)
     
-    if p == TYPE and is_datetime(o):
+    if p == TYPE and (o == TYPE_FOAF_ORGANIZATION or o == TYPE_CONCEPT):
         metadata_uris.add(s)
 
-dump_obj('metadata_uris.pkl', metadata_uris)
+dump_obj('saved/metadata_uris.pkl', metadata_uris)

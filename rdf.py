@@ -60,3 +60,11 @@ def is_individual(uri):
 datetime_types = [TYPE_DATETIME, TYPE_DATETIMEINTERVAL, TYPE_DATETIMEPRECISION, TYPE_DATETIMEVALUE]
 def is_datetime(t):
     return t in datetime_types
+
+def get_type_short_name(uri):
+    uri_prefixes = ["<http://purl.org/NET/c4dm/event.owl#", "<http://www.w3.org/2004/02/skos/core#", "<http://xmlns.com/foaf/0.1/", "<http://purl.obolibrary.org/obo/", "<http://vivo.ufl.edu/ontology/vivo-ufl/", "<http://www.w3.org/2006/vcard/ns#", "<http://vivoweb.org/ontology/core#", "<http://vitro.mannlib.cornell.edu/ns/vitro/0.7#", "<http://vitro.mannlib.cornell.edu/ns/vitro/public#", "<http://www.w3.org/2002/07/owl#", "<http://purl.org/ontology/bibo/"]
+    name_prefixes = ["c4dm", "skos", "foaf", "obo", "ufvivo", "vcard", "vivo", "vitro", "vitro", "owl", "bibo"]
+    for uri_prefix, name_prefix in zip(uri_prefixes, name_prefixes):
+        if uri.startswith(uri_prefix):
+            return name_prefix + ":" + uri[len(uri_prefix) : -1]
+    return "unknown:" + uri
