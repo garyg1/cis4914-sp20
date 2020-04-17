@@ -4,7 +4,8 @@ from __future__ import (
 )
 
 """
-Modified version of https://github.com/deehzee/unionfind (MIT-licensed).
+Modified version of https://github.com/deehzee/unionfind (MIT-licensed). 
+- changed components() to be O(n) instead of O(cn) where c = # of components.
 
 MIT License
 
