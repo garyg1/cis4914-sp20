@@ -7,3 +7,4 @@ hn.txt
 *.log
 *.aux
 .DS_Store
+notes/
