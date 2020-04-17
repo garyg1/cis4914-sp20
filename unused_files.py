@@ -2,7 +2,7 @@ from utils import dump_obj, get_obj, histogram
 from parse import get_lines, parse_line, get_data
 from rdf import TYPE_FILE, is_individual
 
-uritype = get_obj('saved/uri_to_type.pkl')
+uritype = get_obj('uri_to_type.pkl')
 
 files = filter(lambda uri: TYPE_FILE in uritype[uri], uritype)
 

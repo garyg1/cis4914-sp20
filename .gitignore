@@ -6,4 +6,4 @@ __pycache__/
 hn.txt
 *.log
 *.aux
-
+.DS_Store
