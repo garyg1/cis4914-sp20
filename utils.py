@@ -12,13 +12,13 @@ def get_obj(name):
 
 
 def transpose_dict(d):
-    transposed = defaultdict(lambda: 0)
+    transposed = defaultdict(int)
     for k in d:
         transposed[d[k]] += 1
     return dict(transposed)
 
 def histogram(int_iter):
-    count = defaultdict(lambda: 0)
+    count = defaultdict(int)
     for i in int_iter:
         count[i] += 1
     return dict(count)

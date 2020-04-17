@@ -48,16 +48,20 @@ The work yielded over 10,000 orphaned triples. However, the quality of the data 
 \section*{Introduction}
 This project was focused on the analysis and visualization of orphaned data in UF VIVO, an 7.1GB graph database that documents UF research efforts. The database is managed by the UF Clinical and Translational Science IT (CTS-IT) and the VIVO application is publicly accessible at \url{vivo.ufl.edu}. This project was selected because it involved working with real-world data on a large scale. This data has been managed by the CTS-IT for years, and they have a number of full- and part-time employees working on the development of the VIVO application. Moreover, this project has a positive impact on data quality (and potentially database performance) for the University of Florida, which makes it desirable to complete as well.
 
-The project mainly involved the application of basic database and graph algorithms (i.e., table scan, indexing, union find) to an RDF database, so the majority of literature surveyed relates to the RDF database itself. RDF databases are essentially composed of two parts: the "triples" and the "ontology". The triples are values of the form "subject, predicate, object", where each element is a URI. These values carry semantic meaning -- for example, one triple may be "n9633259703 has-type person", or more concretely, "<http://vivo.ufl.edu/individual/n9633259703> <http://www.w3.org/1999/02/22-rdf-syntax-ns\#type> <http://xmlns.com/foaf/0.1/Person>".
+The project mainly involved the application of basic database and graph algorithms (i.e., table scan, indexing, union find) to an RDF database, so the majority of literature surveyed relates to the RDF database itself. RDF databases are essentially composed of a list of "triples" [RDF]. The triples are values of the form "subject, predicate, object", where each element is a URI. These values carry semantic meaning -- for example, one triple may be "n9633259703 has-type person", or more concretely:
 
-The ontology introduces both constraints and an inheritance structure on the triples. Readers familiar with object-oriented programming may find this similar to the Java programming language. Different ontologies are typically combined to form the "schema" for the composite database -- for example, the VIVO ontology uses the FOAF ("friend of a friend"), OBO ("Open Biological and Biomedical Ontology") and VCARD ontologies, and introduces additional classes such as "vivo:Authorship", which relates a "foaf:Agent" and an "obo:InformationContentEntity" (a generic class whose subclasses include "bibo:article" or "obo:TextualEntity"). Relations such as "vivo:Authorship" can carry additional metadata, such as dates. "vivo:Authorship" also carries constraints, such as that it must include at least one "vivo:relates" edge to a "foaf:Agent" and at least one "vivo:relates" edge to an "obo:InformationContentEntity".
+\begin{lstlisting}
+<http://vivo.ufl.edu/individual/n9633259703> <http://www.w3.org/1999/02/22-rdf-syntax-ns\#type> <http://xmlns.com/foaf/0.1/Person>
+\end{lstlisting}
 
-The data analyzed was in N-Quads format, which is an unordered list of all the triples in the form "subject, predicate, object, graph". The "graph" parameter is used to combine multiple RDF databases into a single N-Quads file, and was not used for this project. The N-Quads format is designed to be "easy to parse".
+The UF VIVO database also carries an "ontology". The ontology introduces both constraints and an inheritance structure on the triples [OWL]. Readers familiar with object-oriented programming may find this similar to the Java programming language. Different ontologies are typically combined to form the "schema" for the composite database -- for example, the VIVO ontology uses the FOAF ("friend of a friend"), OBO ("Open Biological and Biomedical Ontology") and VCARD ontologies. The VIVO ontology also introduces classes such as "vivo:Authorship", which relates a "foaf:Agent" and an "obo:InformationContentEntity" (a generic class whose subclasses include "bibo:article" or "obo:TextualEntity"). Relations like "vivo:Authorship" can carry additional metadata, such as dates and labels. "vivo:Authorship" also carries constraints, such as that it must include at least one "vivo:relates" edge to a "foaf:Agent" and at least one "vivo:relates" edge to an "obo:InformationContentEntity" [OWL].
+
+The data analyzed was in N-Quads format, which is an unordered list of all the triples in the form "subject, predicate, object, graph". The "graph" parameter is used to combine multiple RDF databases into a single N-Quads file, and was not used for this project. The N-Quads format is a very simple file format, and was designed to be "easy to parse" [NQuads]. We worked with a snapshot of VIVO taken in January 2020.
 
 \section*{Solution}
 In this project, we produced a collection of tuples that we defined to be orphaned. This involved software components and data analysis components. The software was executed on a 2015 MacBook Pro, so we needed to take a stream processing approach to manipulate the 7.1GB N-Quads file. For the analysis, three approaches employed were successful in screening for orphaned triples.
 
-\subsubsection*{Stream Processing}
+\subsubsection*{Software}
 We determined that processing the N-Quads file as a stream was the most efficient approach to run our queries. There are a number of reasons for this. First, the file contained 37,983,245 triples and was 7.1GB -- not feasible to load into memory. Additionally, loading the file into a SQLite database may seem promising, we are mainly interested in the global properties of the data, so most queries would require a full table scan. Moreover, we wanted to perform complex aggregations, such as determining connected components, which are not possible to express in a SQL query.
 
 Parsing the N-Quads file was extremely simple. Each line is a space-separated array of four URIs enclosed in angle brackets ("<uri> <uri> <uri> <uri> ."). We are only interested in the first three URIs. Therefore, we simply have to look for the first three spaces and split the string into subject, predicate, and object. This was accomplished using native Python.
@@ -67,38 +71,63 @@ We also parallelized similar queries. Reading, parsing, and iterating through th
 Finally, although there were 30 million lines, there were only a few million entities, so we precomputed useful information, such as the type(s) of each entity and the number of edges.
 
 \subsubsection*{Analysis}
-The first approach was a naive definition of orphaning -- we wanted to determine which entities had no neighbors. For this, we ignored predicates and used a regular expression to match VIVO entities. We defined that VIVO entity A is has neighbor B if there is an edge such that A <predicate> B or B <predicate> A, regardless of the actual predicate. 
+The first approach was a naive definition of orphaning -- we wanted to determine which entities had no neighbors. For this, we ignored predicates and used a regular expression to match VIVO entities. We defined that VIVO entity A has neighbor B if there is an edge such that A <predicate> B or B <predicate> A, regardless of the actual predicate. We then queried which entities have no neighbors, and we identified over 90,000 candidate orphans in this way.
+
+The second approach was to determine the connected components of the graph, using the same definition of neighbor. The goal was to determine if there were any orphaned "islands" with a small number of nodes, disconnected from the main graph. This was done using a disjoint sets data structure combined with the regex-based approach mentioned above. We used a publicly-available union-find implementation (\url{https://github.com/deehzee/unionfind}). There was an inefficiency in the part of the implementation that returns the list of components -- we improved this part of the implementation.
+
+The final approach was performing constraint-checking against the published VIVO ontology. We used both the diagrams in [VIVO] and the actual VIVO ontology (vivo.owl). For each constraint, we verified that there was a correct predicate leading to an object of correct type. We used the query parallelization described in the previous section. In addition, we used the precomputed types. This approach yielded tens of thousands of orphans.
 
 \section*{Results}
+\subsubsection*{Naive Orphaning}
+This approach yielded a variety of results, including over 30,000 instances of "vivo:DateTimeValue", almost 1,000 vcard attributes, over 27,000 instances of "vivo:Role", and over 3,000 instances of "foaf:Organization". A more complete type histogram is shown in Figure 1. However, many of these are false positives. For example, there are a number of "vivo:Building"s that shouldn't have any neighbors, such as \url{http://vivo.ufl.edu/individual/n420442285}, which is the "Fruit Crops Pole Barn". Perhaps no one ever uses that building for research, in which case this entry is correct and accurate.
+
+\subsubsection*{Connected Components}
+This approach yielded interesting information about the global topology of the graph, but was less effective at uncovering orphans. We calculated the connected components under three sets of constraints. First, we considered every node in the graph with a URI that corresponded to an VIVO entity (using a regex). The results of the algorithm are shown in Figure 2. The graph consists of one large connected component and a number of tiny connected islands. Then, we re-ran the algorithm but discarded nodes of "metadata" types: "vivo:DateTimeValue", "vivo:Concept", and "vivo:Organization". The results are shown in Figure 3. This subgraph still consisted mainly of one large connected component. Finally, we re-ran the algorithm and discarded nodes with degree over 100. We wanted to determine whether the graph was "robustly" connected or was connected due to a few "supernodes" that hold the graph together. The results are shown in Figure 4. The graph still had a very large connected component.
+
+We then analyzed some of the "islands" to determine if they are orphaned. We had already examined the components of size 1 in the previous approach, so we examined some higher-order components. The first approach was creating a type histogram. Since nodes can have multiple types, we created our histogram using the set of all the node's types as a key. As shown in Figure 5, most of the islands of the same degree also share the same types.
+
+Finally, we examined a few sample islands, and determined that no conclusions can be drawn about validity. For example, \url{https://vivo.ufl.edu/display/n0190888667} is in a component of size 5 (person + vcard + 3 attributes). However, the component describes Magalie Bruneus, an actual UF faculty member with no activity in VIVO. As another example, \url{http://vivo.ufl.edu/individual/n1753230437} is in a connected component of size 13. However, this is an article with 3 authors, each of which do not have any other activity.
+
+\subsubsection*{Constraint-Checking}
+This approach yielded around 10,000 violations of the VIVO ontology and schema [VIVO], listed in Figure 6. We will discuss some of the larger classes of orphans. First, we found 5,000 orphaned vcards -- more specifically, "vcard:Individual"s without an entity that it is "obo:contactInfoFor". This problem has already been noted by CTS-IT. Additionally, we found 3,000 people without vcards -- in other words, "foaf:Person"s without "vcard:Individual"s as "obo:contactInfoFor". However, we noticed that many of these entities were dummy entities created to satisify generic roles, like "Director" and "Staff". We also found 230 "vivo:AwardReceipt"s without "foaf:Agents" who received the award, and found that nearly all of the 10,000 "vivo:AwardReceipt"s did not correspond to a "vivo:Award", which is in violation of the VIVO ontology. However, not all of these issues may need to be corrected, since the VIVO application may be using these fields for different or internal purposes.
+
+\subsubsection*{Other Orphaning}
+We found a number of small discrepancies during the analysis, and we will discuss them in this section. First, there are a number of individuals with extremely long names, due to parsing issues. For example, \url{http://vivo.ufl.edu/individual/n5523339036} has a name over 1,000 characters long -- the name is a list of author first and last names. This problem has already been corrected by CTS-IT. We also found that the entity \url{http://vivo.ufl.edu/individual/n130884} that is both a "foaf:Organization" and a "vcard:Organization", which is not correct. We also found that the entity \url{http://vivo.ufl.edu/individual/n81500} is a "vivo:File" without a download location. Finally, we also found that some entities had URIs that were not single URIs but a ';'-separated list of URIs (i.e., "<uri;uri;uri...>"). We could not verify in [NQuads] or [RDF] how these were to be interpreted. One example is \url{http://vivo.ufl.edu/individual/n659903787;http://vivo.ufl.edu/individual/n81818;http://vivo.ufl.edu/individual/n9307328350;http://vivo.ufl.edu/individual/n68632821}. This specific entity appears to be a connected to a list of authors for the paper \url{http://vivo.ufl.edu/individual/n8110013759}, but the VIVO application does not appear to be interpreting it correctly, as \url{http://vivo.ufl.edu/individual/n81818} (Wang, Min) is not listed as an author of the paper.
 
 \section*{Conclusions}
+In this project, we examined data quality in the UF VIVO graph database. Although the overall quality of UF VIVO's 30M+ triples is quite good, we discovered tens of thousands of orphans and constraint violations, and we determined that many of them should be removed from the database. Additionally, we analyzed the global topology of the VIVO graph, and determined that it is healthy and connected in a robust sense. The code used for the analysis is available at \url{https://github.com/garyg1/cis4914-sp20}. We were not able to determine the root cause of some of the orphaning; this is partially due to the author's extended illness during March and April. However, this task may be impossible, due to the volume of orphaned data and the potential non-availablility of logs. Future work would include an additional validation of the orphans found against the current UF VIVO (instead of a snapshot), followed by deleting the orphaned records.
 
 \section*{Standards}
+All programming was done in Python 3.7 according to the Python Language Reference [Python], and all code was executed in a Python 3.7.6 runtime on MacOS.
 
 \section*{Constraints}
+All code had to be executed on the available equipment: a 2015 MacBook Pro with 8GB of RAM and 128GB of disk space. 
 
-\begin{lstlisting}
-a := 1;
-\end{lstlisting}
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=\textwidth]{output.png}
-\caption{An example execution.}
-\label{fig:output}
-\end{figure}
+% \begin{lstlisting}
+% a := 1;
+% \end{lstlisting}
+% 
+% \begin{figure}[h!]
+% \centering
+% \includegraphics[width=\textwidth]{output.png}
+% \caption{An example execution.}
+% \label{fig:output}
+% \end{figure}
 
 \section*{Acknowledgments}
 The author thanks Christopher Barnes for advising the project, and the UF CTS-IT for providing access to the VIVO data. The author also thanks Taeber Rapczak for his excellent help and guidance.
 
 \section*{References}
-[RDF] Ora Lassila and Ralph Swick. “Resource Description Framework (RDF) Model and Syntax Specification”, https://www.w3.org/TR/1999/REC-rdf-syntax-19990222, W3C (as-of 6 April 2020).
 
-[NQuads] Gavin Carothers and Lex Machina, Inc. “RDF 1.1 N-Quads: A line-based syntax for RDF datasets”, https://www.w3.org/TR/n-quads/, W3C (as-of 6 April 2020).
+[NQuads] Gavin Carothers and Lex Machina, Inc. “RDF 1.1 N-Quads: A line-based syntax for RDF datasets”, \url{https://www.w3.org/TR/n-quads/}, W3C (as-of 6 April 2020).
 
-[OWL] Mike Dean, et al. "OWL Web Ontology Language", https://www.w3.org/TR/owl-ref/, W3C (as-of 15 April 2020).
+[OWL] Mike Dean, et al. "OWL Web Ontology Language", \url{https://www.w3.org/TR/owl-ref/}, W3C (as-of 15 April 2020).
 
-[Python] Guido van Rossum. “The Python Programming Language”, https://python.org, Python Software Foundation (as-of 6 April 2020).
+[Python] Guido van Rossum. “The Python Programming Language”, \url{https://python.org}, Python Software Foundation (as-of 6 April 2020).
+
+[RDF] Ora Lassila and Ralph Swick. “Resource Description Framework (RDF) Model and Syntax Specification”, \url{https://www.w3.org/TR/1999/REC-rdf-syntax-19990222}, W3C (as-of 6 April 2020).
+
+[VIVO] Andrew Woods. "VIVO Ontology Diagrams", \url{https://wiki.lyrasis.org/display/VIVODOC111x/Ontology+Diagrams} (as-of 14 April 2020).
 
 \section*{Biography}
 Gary Gurlaskie is an undergraduate student studying Mathematics and Computer Science at the University of Florida. He worked at Ultimate Software (data platform engineering) and Intel (software engineering). He plans to graduate in May 2020, and upon graduation will move to Portland to work at Intel full-time. He has always wanted to have a cat, so he will obtain one when he moves to Oregon.

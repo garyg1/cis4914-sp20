@@ -4,7 +4,7 @@ from utils import get_obj, transpose_dict, dump_obj
 from collections import defaultdict
 
 orphans = set(get_obj('regex_orphans_orphans.pkl'))
-types = defaultdict(lambda: 0)
+types = defaultdict(int)
 line_count = 0
 for s, p, o in map(parse_line, get_data()):
     line_count += 1

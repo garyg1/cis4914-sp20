@@ -13,7 +13,7 @@ print(len(orphan_persons1), len(orphan_persons2))
 # dump_obj('people_without_vcards.pkl', orphan_persons1)
 
 OK, "orphaned" article, cc of size 13
-<https://vivo.ufl.edu/display/n1753230437>
+<http://vivo.ufl.edu/individual/n1753230437>
 
 OK, "orphaned" faculty member and vcard with no activity, cc of size 5
 <http://vivo.ufl.edu/individual/n0190888667>, <https://vivo.ufl.edu/display/n0190888668>
