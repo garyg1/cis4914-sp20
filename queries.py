@@ -1,6 +1,6 @@
 from parse import parse_line, get_data
 from utils import get_obj
-from rdf import NUM_LINES, TYPE_ANY
+from rdf import NUM_LINES, TYPE_ANY, TYPE_EDGE_ANY
 
 uritype = get_obj('uri_to_type.pkl')
 
@@ -36,11 +36,17 @@ def query_orphans(queries):
             print(line_count, '/', NUM_LINES)
 
         for i, (type1, type2, begin_edge, end_edge) in enumerate(queries):
-            if p != begin_edge and p != end_edge:
-                continue
-            if p == begin_edge and s in types_begin[i] and (type2 == TYPE_ANY or o in uritype and type2 in uritype[o]):
+            if (
+                    p == begin_edge or begin_edge == TYPE_EDGE_ANY
+                ) and s in types_begin[i] and (
+                    type2 == TYPE_ANY or o in uritype and type2 in uritype[o]
+                ):
                 types_begin[i].remove(s)
-            if p == end_edge and o in types_end[i] and (type2 == TYPE_ANY or s in uritype and type2 in uritype[s]):
+            if (
+                    p == end_edge or end_edge == TYPE_EDGE_ANY
+                ) and o in types_end[i] and (
+                    type2 == TYPE_ANY or s in uritype and type2 in uritype[s]
+                ):
                 types_end[i].remove(o)
 
     return list(zip(all_of_type, types_begin, types_end))

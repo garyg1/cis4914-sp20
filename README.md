@@ -12,3 +12,6 @@ All code is designed for a Python 3.7 runtime. The code depends on:
 
 #### Notes
 - Some scripts depend on cached objects. These objects are cached using pickles (see `utils.py:get_obj/dump_obj`). These pickles can be built with the scripts `make_*.py`.
+
+## Results
+The file `results/orphans_and_constraint_violating.zip` contains the constraint-violating triples.

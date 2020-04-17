@@ -8,3 +8,4 @@ hn.txt
 *.aux
 .DS_Store
 notes/
+orphans_and_constraint_violating/

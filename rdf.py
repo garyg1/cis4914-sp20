@@ -28,6 +28,7 @@ TYPE_ADVISOR_ROLE = "<http://vivoweb.org/ontology/core#AdvisorRole>"
 TYPE_ADVISEE_ROLE = "<http://vivoweb.org/ontology/core#AdviseeRole>"
 TYPE_AGENT = "<http://xmlns.com/foaf/0.1/Agent>"
 TYPE_ANY = "**any type**"
+TYPE_EDGE_ANY = "**any edge**"
 TYPE_AUTHORSHIP = AUTHORSHIP
 TYPE_AWARD = "<http://vivoweb.org/ontology/core#Award>"
 TYPE_AWARD_RECEIPT = "<http://vivoweb.org/ontology/core#AwardReceipt>"
