@@ -8,4 +8,5 @@ hn.txt
 *.aux
 .DS_Store
 notes/
+ontology/
 orphans_and_constraint_violating/
