@@ -2,6 +2,8 @@ from parse import get_lines, parse_line, get_data
 from rdf import TYPE, LABEL, RELATES, RELATED_BY, NUM_LINES, is_individual
 from utils import dump_obj
 
+# NOTE: these 4 scripts are expected to be run in sequence
+
 # count edges regardless of predicate
 
 edges = dict()
