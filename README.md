@@ -1,7 +1,7 @@
 ## Code for Orphaned Triples in UF VIVO Project
 
 ## Introduction
-This project involved locating orphaned (and other constraint-violating) triples in an RDF database. This is the code used for the analysis as described in the report (available in `report/report.pdf`). (The code that was unsuccessful in achieving that goal was removed from the repository.)
+This project involved locating orphaned (and other constraint-violating) triples in an RDF database. A detailed summary of the project is available in the report (https://github.com/garyg1/cis4914-sp20/blob/master/report/report.pdf).
 
 ## Running
 #### Dependencies
