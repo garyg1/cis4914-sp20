@@ -141,7 +141,10 @@ Finally, after we examined a few sample islands, we determined that few conclusi
 \label{fig:output}
 \end{figure}
 
+\qquad
+
 \pagebreak
+
 \subsubsection*{Constraint-Checking}
 This approach yielded around 10,000 violations of the VIVO ontology and schema [VIVO], listed in Figure 8. We will discuss some of the larger classes of orphans. First, we found 5,000 orphaned vcards -- more specifically, "vcard:Individual"s without an entity that it is "obo:contactInfoFor". This problem has already been noted by CTS-IT. Additionally, we found 3,000 people without vcards -- in other words, "foaf:Person"s without "vcard:Individual"s as "obo:contactInfoFor". However, we noticed that many of these entities were dummy entities created to satisfy generic roles, like "Director" and "Staff". We also found 230 "vivo:AwardReceipt"s without "foaf:Agents" who received the award, and found that nearly all of the 10,000 "vivo:AwardReceipt"s did not correspond to a "vivo:Award", which violates the VIVO ontology. However, not all of these issues may need to be corrected, since the VIVO application may be using these fields for different or internal purposes.
 
