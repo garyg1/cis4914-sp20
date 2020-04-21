@@ -11,7 +11,7 @@ All code is designed for a Python 3.7 runtime. The code depends on:
 - modified version of union-find implementation available here https://github.com/deehzee/unionfind (this dependency is vendored)
 
 #### Resources
-This ran on my Macbook pretty well, but you're probably going to need 1-2GB of disk space (for pickles) and 3-4GB of RAM (for indexes).
+This ran on my Macbook pretty well, but you're probably going to need **1-2GB of disk space (for pickles) and 3-4GB of RAM** (for indexes).
 
 #### Notes
 - Some scripts depend on cached objects. These objects are cached using pickles (see `utils.py:get_obj/dump_obj`). These pickles can be built with the scripts `make_*.py`.
