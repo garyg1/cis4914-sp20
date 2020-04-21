@@ -7,8 +7,8 @@ This project involved locating orphaned (and other constraint-violating) triples
 #### Dependencies
 All code is designed for a Python 3.7 runtime. The code depends on:
 - the file `data/content.nq`, which is a snapshot of the database.
--  `numpy`, for the union-find implementation
-- modified version of union-find implementation available here https://github.com/deehzee/unionfind (this dependency is vendored)
+- `numpy`, for the union-find implementation
+- (vendored) union-find implementation available here https://github.com/deehzee/unionfind
 
 #### Resources
 This ran on my Macbook pretty well, but you're probably going to need **1-2GB of disk space (for pickles) and 3-4GB of RAM** (for indexes).
