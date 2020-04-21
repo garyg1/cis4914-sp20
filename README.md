@@ -17,7 +17,8 @@ This ran on my Macbook pretty well, but you're probably going to need **1-2GB of
 - Some scripts depend on cached objects. These objects are cached using pickles (see `utils.py:get_obj/dump_obj`). These pickles can be built with the scripts `make_*.py`.
 
 ## Results
+#### Orphaned Triples
 The file `results/orphans_and_constraint_violating.zip` contains the constraint-violating triples.
 
-## Raw Data
+#### Raw Results
 Available here: https://docs.google.com/spreadsheets/d/1l6c9I52a6VDYd0nxRHaiKIDRaN5LxMmbn1GpqllCLts/edit?usp=sharing
