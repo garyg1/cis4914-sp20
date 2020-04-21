@@ -56,7 +56,7 @@ The UF VIVO database also carries an "ontology". The ontology introduces both co
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=\textwidth]{membership-model.png}
+\includegraphics[width=11cm]{membership-model.png}
 \caption{VIVO committee model [VIVO] (CC BY 4.0, cropped)}
 \label{fig:output}
 \end{figure}
@@ -88,12 +88,12 @@ The final approach was performing constraint-checking against the published VIVO
 
 \section*{Results}
 \subsubsection*{Naive Orphaning}
-This approach yielded a variety of candidate orphans, including over 30,000 instances of "vivo:DateTimeValue", almost 1,000 vcard attributes, over 25,000 instances of "vivo:Role", and over 3,000 instances of "foaf:Organization". A more complete picture of the types is given in Figure 2. However, many of these are false positives. For example, there are many "vivo:Building"s that shouldn't have any neighbors, such as \url{http://vivo.ufl.edu/individual/n420442285}, which is the "Fruit Crops Pole Barn". Perhaps no one ever uses that building for research, in which case this entry is correct and accurate. Despite this, this approach successfully yielded several classes of orphans that clearly can be removed, such as the orphaned DateTimes.
+This approach yielded a variety of candidate orphans, including over 30,000 instances of "vivo:DateTimeValue", over 7000 vcard URLs, over 25,000 instances of "vivo:Role", and over 3,000 instances of "foaf:Organization". A more complete picture of the types is given in Figure 2, and the full data is available on GitHub. However, many of these are false positives. For example, there are many "vivo:Building"s that shouldn't have any neighbors, such as \url{http://vivo.ufl.edu/individual/n420442285}, which is the "Fruit Crops Pole Barn". Perhaps no one ever uses that building for research, in which case this entry is correct and accurate. Despite this, this approach successfully yielded several classes of orphans that clearly can be removed, such as the orphaned DateTimes.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{orphan-types.png}
-\caption{Naively orphaned nodes by type. (Using "most specific" type(s), no superclasses.)}
+\caption{Naively orphaned nodes by type. There were over 100 different types of naively orphaned nodes -- these are only the top 35 most frequent occurrences. (Using "most specific" type(s), no superclasses.)}
 \label{fig:output}
 \end{figure}
 
@@ -148,7 +148,7 @@ This approach yielded around 10,000 violations of the VIVO ontology and schema [
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{violators.png}
-\caption{Constraints checked. Notice that the constraint "authorship\_without\_person" had more in-violators than out-violators.}
+\caption{Constraints checked. VIVO is a directed graph, but most edges are expected to exist in both directions, so we define an "out-violator" as a node without a correct outward edge. Notice that the constraint "authorship\_without\_person" had more in-violators than out-violators.}
 \label{fig:output}
 \end{figure}
 
